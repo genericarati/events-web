@@ -2,18 +2,19 @@ module Main exposing (..)
 
 import Html exposing (Html, text, div, h1, img, button)
 import Html.Attributes as Attribute exposing (..)
+import Html.Events exposing (onClick)
 
 
 ---- MODEL ----
 
 
 type alias Model =
-    {}
+    { order : String, dealer : String }
 
 
 init : ( Model, Cmd Msg )
 init =
-    ( {}, Cmd.none )
+    ( { order = "12345", dealer = "dealer1" }, Cmd.none )
 
 
 
@@ -22,11 +23,17 @@ init =
 
 type Msg
     = NoOp
+    | RequestTrade
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
-    ( model, Cmd.none )
+    case msg of
+        RequestTrade ->
+            ( { model | dealer = "dealer2" }, Cmd.none )
+
+        _ ->
+            ( model, Cmd.none )
 
 
 
@@ -37,9 +44,9 @@ view : Model -> Html Msg
 view model =
     div []
         [ div [ myStyle ]
-            [ text "I am dealer 1" ]
+            [ text "I am dealer 1", text model.dealer ]
         , div []
-            [ button [ myStyle ] [ text "Request trade" ]
+            [ button [ myStyle, onClick RequestTrade ] [ text "Request trade" ]
             ]
         ]
 
