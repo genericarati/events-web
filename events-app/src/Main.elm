@@ -7,6 +7,7 @@ import RemoteData.Http
 import Json.Decode
 import RemoteData exposing (WebData, RemoteData(..))
 import Json.Decode.Pipeline
+import Navigation exposing (Location)
 
 
 type alias Model =
@@ -17,8 +18,8 @@ type alias Order =
     { ordernumber : String, dealer : String }
 
 
-init : ( Model, Cmd Msg )
-init =
+init : Location -> ( Model, Cmd Msg )
+init location =
     ( { response = NotAsked }, Cmd.none )
 
 
@@ -26,6 +27,7 @@ type Msg
     = NoOp
     | RequestTrade
     | TradeResponse (WebData Order)
+    | UrlChange Location
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -92,9 +94,9 @@ myStyle =
 
 main : Program Never Model Msg
 main =
-    Html.program
-        { view = view
-        , init = init
+    Navigation.program UrlChange
+        { init = init
         , update = update
+        , view = view
         , subscriptions = always Sub.none
         }
