@@ -10,16 +10,16 @@ import Json.Decode.Pipeline
 
 
 type alias Model =
-    { order : String, dealer : String, response : WebData Order }
+    { response : WebData Order }
 
 
 type alias Order =
-    { message : String }
+    { ordernumber : String, dealer : String }
 
 
 init : ( Model, Cmd Msg )
 init =
-    ( { order = "12345", dealer = "dealer1", response = NotAsked }, Cmd.none )
+    ( { response = NotAsked }, Cmd.none )
 
 
 type Msg
@@ -54,14 +54,14 @@ view model =
                     data
 
                 NotAsked ->
-                    { message = "Initial value" }
+                    { ordernumber = "", dealer = "" }
 
                 _ ->
-                    { message = "Problem" }
+                    { ordernumber = "", dealer = "" }
     in
         div []
             [ div [ myStyle ]
-                [ text "I am dealer 1-", text value.message ]
+                [ text value.dealer ]
             , div []
                 [ button [ myStyle, onClick RequestTrade ] [ text "Request trade" ]
                 ]
@@ -70,10 +70,9 @@ view model =
 
 tradeResponseDecoder : Json.Decode.Decoder Order
 tradeResponseDecoder =
-    Json.Decode.Pipeline.required
-        "message"
-        Json.Decode.string
-        (Json.Decode.Pipeline.decode Order)
+    (Json.Decode.Pipeline.decode Order)
+        |> Json.Decode.Pipeline.required "ordernumber" Json.Decode.string
+        |> Json.Decode.Pipeline.required "dealer" Json.Decode.string
 
 
 createGetRequest : Cmd Msg
