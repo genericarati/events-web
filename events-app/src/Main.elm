@@ -1,6 +1,6 @@
 module Main exposing (..)
 
-import Html exposing (Html, text, div, h1, img, button)
+import Html exposing (Html, text, div, h1, img, button, ul, li)
 import Html.Attributes as Attribute exposing (..)
 import Html.Events exposing (onClick)
 import RemoteData.Http
@@ -25,16 +25,39 @@ type alias Order =
 
 init : Location -> ( Model, Cmd Msg )
 init location =
-    ( Model NotAsked Dealer1, createGetRequest "dealer1" )
+    let
+        page =
+            case location.hash of
+                "#Dealer1" ->
+                    Dealer1
+
+                "#Dealer2" ->
+                    Dealer2
+
+                _ ->
+                    Dealer1
+
+        command =
+            case location.hash of
+                "#Dealer1" ->
+                    "dealer1"
+
+                "#Dealer2" ->
+                    "dealer2"
+
+                _ ->
+                    "dealer1"
+    in
+        ( Model NotAsked page, createGetRequest command )
 
 
 type Msg
     = NoOp
     | RequestTrade
     | TradeResponse (WebData Order)
-    | UrlChange Location
     | Dealer1Page
     | Dealer2Page
+    | LinkTo String
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -52,10 +75,10 @@ update msg model =
         Dealer2Page ->
             ( { model | currentPage = Dealer2 }, createGetRequest "dealer2" )
 
-        NoOp ->
-            ( model, Cmd.none )
+        LinkTo path ->
+            ( model, Navigation.newUrl path )
 
-        UrlChange location ->
+        NoOp ->
             ( model, Cmd.none )
 
 
@@ -65,10 +88,6 @@ view model =
         [ div [ myStyle ]
             [ render_page model
             , render_menu model
-            ]
-        , div []
-            [ button [ myStyle, onClick RequestTrade ]
-                [ text "Request trade" ]
             ]
         ]
 
@@ -90,20 +109,22 @@ render_page model =
         page_content =
             case model.currentPage of
                 Dealer1 ->
-                    div []
-                        [ div []
-                            [ div [] [ text "I am dealer1" ]
-                            , div [] [ text value.ordernumber ]
-                            , div [] [ text value.dealer ]
+                    div [ myStyle ]
+                        [ h1 []
+                            [ text "I am dealer1" ]
+                        , ul []
+                            [ li [] [ text value.ordernumber ]
+                            , li [] [ text value.dealer ]
                             ]
                         ]
 
                 Dealer2 ->
-                    div []
-                        [ div []
-                            [ div [] [ text "I am dealer2" ]
-                            , div [] [ text value.ordernumber ]
-                            , div [] [ text value.dealer ]
+                    div [ myStyle ]
+                        [ h1 []
+                            [ text "I am dealer2" ]
+                        , ul []
+                            [ li [] [ text value.ordernumber ]
+                            , li [] [ text value.dealer ]
                             ]
                         ]
     in
@@ -112,10 +133,18 @@ render_page model =
 
 render_menu : Model -> Html Msg
 render_menu model =
-    div []
-        [ button [ onClick Dealer1Page ] [ text "Dealer1 Page" ]
-        , button [ onClick Dealer2Page ] [ text "Dealer2 Page" ]
-        ]
+    let
+        value =
+            case model.currentPage of
+                Dealer1 ->
+                    "#Dealer1"
+
+                Dealer2 ->
+                    "#Dealer2"
+    in
+        div []
+            [ button [ onClick (LinkTo value) ] [ text "Request Trade" ]
+            ]
 
 
 tradeResponseDecoder : Json.Decode.Decoder Order
@@ -136,15 +165,28 @@ myStyle =
         [ ( "margin-left", "auto" )
         , ( "margin-right", "auto" )
         , ( "margin-top", "20px" )
-        , ( "width", "100px" )
+        , ( "width", "200px" )
         ]
 
 
 main : Program Never Model Msg
 main =
-    Navigation.program UrlChange
+    Navigation.program locFor
         { init = init
         , update = update
         , view = view
         , subscriptions = always Sub.none
         }
+
+
+locFor : Location -> Msg
+locFor location =
+    case location.hash of
+        "#Dealer1" ->
+            Dealer1Page
+
+        "#Dealer2" ->
+            Dealer2Page
+
+        _ ->
+            NoOp
