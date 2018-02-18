@@ -6,8 +6,8 @@ import Html.Events exposing (onClick)
 import RemoteData.Http
 import Json.Decode
 import RemoteData exposing (WebData, RemoteData(..))
-import Json.Decode.Pipeline
 import Navigation exposing (Location)
+import Json.Decode.Pipeline
 
 
 type Page
@@ -16,7 +16,7 @@ type Page
 
 
 type alias Model =
-    { response : WebData Order, currentPage : Page }
+    { response : WebData (List Order), currentPage : Page }
 
 
 type alias Order =
@@ -54,7 +54,7 @@ init location =
 type Msg
     = NoOp
     | RequestTrade
-    | TradeResponse (WebData Order)
+    | TradeResponse (WebData (List Order))
     | Dealer1Page
     | Dealer2Page
     | LinkTo String
@@ -92,40 +92,46 @@ view model =
         ]
 
 
+getListOfOrdersFromResponse : WebData (List Order) -> List Order
+getListOfOrdersFromResponse orderListWebData =
+    case orderListWebData of
+        Success data ->
+            data
+
+        NotAsked ->
+            []
+
+        _ ->
+            []
+
+
+render_Order : Order -> Html msg
+render_Order order =
+    let
+        value =
+            order.ordernumber ++ " " ++ order.dealer
+    in
+        li [] [ text value ]
+
+
 render_page : Model -> Html Msg
 render_page model =
     let
-        value =
-            case model.response of
-                Success data ->
-                    data
-
-                NotAsked ->
-                    { ordernumber = "", dealer = "" }
-
-                _ ->
-                    { ordernumber = "", dealer = "" }
+        orderList =
+            getListOfOrdersFromResponse model.response
 
         page_content =
             case model.currentPage of
                 Dealer1 ->
                     div [ myStyle ]
-                        [ h1 []
-                            [ text "I am dealer1" ]
-                        , ul []
-                            [ li [] [ text value.ordernumber ]
-                            , li [] [ text value.dealer ]
-                            ]
+                        [ h1 [] [ text "I am dealer1" ]
+                        , ul [] (List.map render_Order orderList)
                         ]
 
                 Dealer2 ->
                     div [ myStyle ]
-                        [ h1 []
-                            [ text "I am dealer2" ]
-                        , ul []
-                            [ li [] [ text value.ordernumber ]
-                            , li [] [ text value.dealer ]
-                            ]
+                        [ h1 [] [ text "I am dealer2" ]
+                        , ul [] (List.map render_Order orderList)
                         ]
     in
         div [] [ page_content ]
@@ -147,11 +153,16 @@ render_menu model =
             ]
 
 
-tradeResponseDecoder : Json.Decode.Decoder Order
-tradeResponseDecoder =
-    (Json.Decode.Pipeline.decode Order)
+orderDecoder : Json.Decode.Decoder Order
+orderDecoder =
+    Json.Decode.Pipeline.decode Order
         |> Json.Decode.Pipeline.required "ordernumber" Json.Decode.string
         |> Json.Decode.Pipeline.required "dealer" Json.Decode.string
+
+
+tradeResponseDecoder : Json.Decode.Decoder (List Order)
+tradeResponseDecoder =
+    Json.Decode.list orderDecoder
 
 
 createGetRequest : String -> Cmd Msg
