@@ -1,4 +1,4 @@
-module GetOrders exposing (getListOfOrdersFromResponse, createGetRequest)
+module GetOrders exposing (getListOfOrdersFromResponse, getOrdersForDealer)
 
 import RemoteData exposing (WebData, RemoteData(..))
 import Json.Decode
@@ -28,11 +28,14 @@ orderDecoder =
         |> Json.Decode.Pipeline.required "dealer" Json.Decode.string
 
 
-tradeResponseDecoder : Json.Decode.Decoder (List Model.Order)
-tradeResponseDecoder =
+getOrdersByDealerResponseDecoder : Json.Decode.Decoder (List Model.Order)
+getOrdersByDealerResponseDecoder =
     Json.Decode.list orderDecoder
 
 
-createGetRequest : String -> Cmd Msg
-createGetRequest dealerId =
-    RemoteData.Http.get ("http://localhost:8080/" ++ dealerId) TradeResponse tradeResponseDecoder
+getOrdersForDealer : String -> Cmd Msg
+getOrdersForDealer dealerId =
+    RemoteData.Http.get
+        ("http://localhost:8080/" ++ dealerId)
+        GetOrdersByDealerResponse
+        getOrdersByDealerResponseDecoder

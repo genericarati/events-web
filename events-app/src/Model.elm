@@ -9,7 +9,7 @@ type Page
 
 
 type alias Model =
-    { response : WebData (List Order), currentPage : Page }
+    { response : WebData (List Order), currentPage : Page, selectedOrder : Order }
 
 
 type alias Order =

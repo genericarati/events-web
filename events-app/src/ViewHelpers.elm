@@ -20,7 +20,7 @@ render_menu model =
                     "#Dealer2"
     in
         div []
-            [ button [ onClick (LinkTo value) ] [ text "Request Trade" ]
+            [ button [ onClick RequestTrade ] [ text "Request Trade" ]
             ]
 
 

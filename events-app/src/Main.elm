@@ -3,10 +3,11 @@ module Main exposing (..)
 import Html exposing (Html, text, div, h1, img, button, ul, li)
 import RemoteData exposing (WebData, RemoteData(..))
 import Navigation exposing (Location)
-import GetOrders exposing (getListOfOrdersFromResponse, createGetRequest)
+import GetOrders exposing (getListOfOrdersFromResponse, getOrdersForDealer)
 import Model exposing (Model, Order, Page(..))
 import Msg exposing (..)
 import ViewHelpers exposing (..)
+import RequestTrade exposing (requestTrade)
 
 
 init : Location -> ( Model, Cmd Msg )
@@ -34,28 +35,31 @@ init location =
                 _ ->
                     "dealer1"
     in
-        ( Model NotAsked page, createGetRequest command )
+        ( Model NotAsked page (Order "" ""), getOrdersForDealer command )
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         RequestTrade ->
-            ( model, createGetRequest "dealer2" )
+            ( model, requestTrade model )
 
-        TradeResponse response ->
+        GetOrdersByDealerResponse response ->
             ( { model | response = response }, Cmd.none )
 
         Dealer1Page ->
-            ( { model | currentPage = Dealer1 }, createGetRequest "dealer1" )
+            ( { model | currentPage = Dealer1 }, getOrdersForDealer "dealer1" )
 
         Dealer2Page ->
-            ( { model | currentPage = Dealer2 }, createGetRequest "dealer2" )
+            ( { model | currentPage = Dealer2 }, getOrdersForDealer "dealer2" )
 
         LinkTo path ->
             ( model, Navigation.newUrl path )
 
         NoOp ->
+            ( model, Cmd.none )
+
+        TradeResponse response ->
             ( model, Cmd.none )
 
 
