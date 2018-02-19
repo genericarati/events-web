@@ -42,8 +42,12 @@ init location =
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        RequestTrade ->
-            ( model, requestTrade model )
+        RequestTrade order ->
+            let
+                _ =
+                    Debug.log "test"
+            in
+                ( { model | selectedOrder = order }, requestTrade model )
 
         GetOrdersByDealerResponse response ->
             ( { model | response = response }, Cmd.none )

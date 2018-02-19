@@ -9,7 +9,7 @@ import Model exposing (..)
 
 requestTrade : Model -> Cmd Msg
 requestTrade model =
-    post "localhost:8080/requestTrade"
+    post "http://localhost:8080/requestTrade"
         TradeResponse
         tradeResponseDecoder
         (encodeOrder model)
@@ -18,11 +18,6 @@ requestTrade model =
 tradeResponseDecoder : Json.Decode.Decoder Int
 tradeResponseDecoder =
     Json.Decode.int
-
-
-encodeTradeRequest : Model -> String
-encodeTradeRequest model =
-    Json.Encode.encode 0 (encodeOrder model)
 
 
 encodeOrder : Model -> Json.Encode.Value

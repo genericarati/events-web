@@ -2,11 +2,11 @@ module ViewHelpers exposing (..)
 
 import Model exposing (..)
 import Html exposing (Html, text, div, h1, img, button, ul, li)
-import Html.Attributes as Attribute exposing (..)
+import Html.Attributes as Attributes exposing (..)
 import Msg exposing (..)
 import GetOrders exposing (..)
 import Material.Table as Table exposing (..)
-import Material.Button as Button exposing (..)
+import Html.Events exposing (onClick)
 
 
 myStyle : Html.Attribute msg
@@ -37,14 +37,8 @@ render_order_table orderList model =
                             [ Table.td [] [ text order.ordernumber ]
                             , Table.td [ Table.numeric ] [ text order.dealer ]
                             , Table.td [ Table.numeric ]
-                                [ Button.render Mdl
-                                    [ 9, 0, 0, 1 ]
-                                    model.mdl
-                                    [ Button.ripple
-                                    , Button.colored
-                                    , Button.raised
-                                    , Button.link "#grid"
-                                    ]
+                                [ Html.button
+                                    [ Html.Events.onClick (RequestTrade order) ]
                                     [ text "Request Trade" ]
                                 ]
                             ]
@@ -62,15 +56,15 @@ render_page model =
         page_content =
             case model.currentPage of
                 Dealer1 ->
-                    div [ myStyle ]
+                    Html.div [ myStyle ]
                         [ h1 [] [ text "I am dealer1" ]
                         , render_order_table orderList model
                         ]
 
                 Dealer2 ->
-                    div [ myStyle ]
+                    Html.div [ myStyle ]
                         [ h1 [] [ text "I am dealer2" ]
                         , render_order_table orderList model
                         ]
     in
-        div [] [ page_content ]
+        Html.div [] [ page_content ]
