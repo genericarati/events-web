@@ -47,7 +47,7 @@ update msg model =
                 _ =
                     Debug.log "test"
             in
-                ( { model | selectedOrder = order }, requestTrade model )
+                ( { model | selectedOrder = order }, requestTrade order )
 
         GetOrdersByDealerResponse response ->
             ( { model | response = response }, Cmd.none )

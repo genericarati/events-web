@@ -7,12 +7,12 @@ import Json.Decode
 import Model exposing (..)
 
 
-requestTrade : Model -> Cmd Msg
-requestTrade model =
+requestTrade : Model.Order -> Cmd Msg
+requestTrade order =
     post "http://localhost:8080/requestTrade"
         TradeResponse
         tradeResponseDecoder
-        (encodeOrder model)
+        (encodeOrder order)
 
 
 tradeResponseDecoder : Json.Decode.Decoder Int
@@ -20,9 +20,9 @@ tradeResponseDecoder =
     Json.Decode.int
 
 
-encodeOrder : Model -> Json.Encode.Value
-encodeOrder model =
+encodeOrder : Model.Order -> Json.Encode.Value
+encodeOrder order =
     Json.Encode.object
-        [ ( "ordernumber", Json.Encode.string model.selectedOrder.ordernumber )
-        , ( "dealer", Json.Encode.string model.selectedOrder.dealer )
+        [ ( "ordernumber", Json.Encode.string order.ordernumber )
+        , ( "dealer", Json.Encode.string order.dealer )
         ]
