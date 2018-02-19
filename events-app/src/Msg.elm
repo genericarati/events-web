@@ -2,6 +2,7 @@ module Msg exposing (..)
 
 import RemoteData exposing (WebData)
 import Model exposing (..)
+import Material exposing (Msg)
 
 
 type Msg
@@ -12,3 +13,4 @@ type Msg
     | Dealer2Page
     | LinkTo String
     | TradeResponse (WebData Int)
+    | Mdl (Material.Msg Msg)

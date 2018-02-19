@@ -3,25 +3,10 @@ module ViewHelpers exposing (..)
 import Model exposing (..)
 import Html exposing (Html, text, div, h1, img, button, ul, li)
 import Html.Attributes as Attribute exposing (..)
-import Html.Events exposing (onClick)
 import Msg exposing (..)
 import GetOrders exposing (..)
-
-
-render_menu : Model -> Html Msg
-render_menu model =
-    let
-        value =
-            case model.currentPage of
-                Dealer1 ->
-                    "#Dealer1"
-
-                Dealer2 ->
-                    "#Dealer2"
-    in
-        div []
-            [ button [ onClick RequestTrade ] [ text "Request Trade" ]
-            ]
+import Material.Table as Table exposing (..)
+import Material.Button as Button exposing (..)
 
 
 myStyle : Html.Attribute msg
@@ -30,20 +15,45 @@ myStyle =
         [ ( "margin-left", "auto" )
         , ( "margin-right", "auto" )
         , ( "margin-top", "20px" )
-        , ( "width", "200px" )
+        , ( "width", "400px" )
         ]
 
 
-render_Order : Model.Order -> Html msg
-render_Order order =
-    let
-        value =
-            order.ordernumber ++ " " ++ order.dealer
-    in
-        li [] [ text value ]
+render_order_table : List Model.Order -> Model.Model -> Html Msg.Msg
+render_order_table orderList model =
+    Table.table []
+        [ Table.thead []
+            [ Table.tr []
+                [ Table.th [] [ text "Order" ]
+                , Table.th [] [ text "Dealer" ]
+                , Table.th [] [ text "Action" ]
+                ]
+            ]
+        , Table.tbody []
+            (orderList
+                |> List.map
+                    (\order ->
+                        Table.tr []
+                            [ Table.td [] [ text order.ordernumber ]
+                            , Table.td [ Table.numeric ] [ text order.dealer ]
+                            , Table.td [ Table.numeric ]
+                                [ Button.render Mdl
+                                    [ 9, 0, 0, 1 ]
+                                    model.mdl
+                                    [ Button.ripple
+                                    , Button.colored
+                                    , Button.raised
+                                    , Button.link "#grid"
+                                    ]
+                                    [ text "Request Trade" ]
+                                ]
+                            ]
+                    )
+            )
+        ]
 
 
-render_page : Model -> Html Msg
+render_page : Model.Model -> Html Msg.Msg
 render_page model =
     let
         orderList =
@@ -54,13 +64,13 @@ render_page model =
                 Dealer1 ->
                     div [ myStyle ]
                         [ h1 [] [ text "I am dealer1" ]
-                        , ul [] (List.map render_Order orderList)
+                        , render_order_table orderList model
                         ]
 
                 Dealer2 ->
                     div [ myStyle ]
                         [ h1 [] [ text "I am dealer2" ]
-                        , ul [] (List.map render_Order orderList)
+                        , render_order_table orderList model
                         ]
     in
         div [] [ page_content ]

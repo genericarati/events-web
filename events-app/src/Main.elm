@@ -8,6 +8,7 @@ import Model exposing (Model, Order, Page(..))
 import Msg exposing (..)
 import ViewHelpers exposing (..)
 import RequestTrade exposing (requestTrade)
+import Material
 
 
 init : Location -> ( Model, Cmd Msg )
@@ -35,7 +36,7 @@ init location =
                 _ ->
                     "dealer1"
     in
-        ( Model NotAsked page (Order "" ""), getOrdersForDealer command )
+        ( Model NotAsked page (Order "" "") Material.model, getOrdersForDealer command )
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -62,13 +63,15 @@ update msg model =
         TradeResponse response ->
             ( model, Cmd.none )
 
+        Mdl msg_ ->
+            Material.update Mdl msg_ model
+
 
 view : Model -> Html Msg
 view model =
     div []
         [ div [ myStyle ]
             [ render_page model
-            , render_menu model
             ]
         ]
 

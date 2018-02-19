@@ -1,6 +1,7 @@
 module Model exposing (..)
 
 import RemoteData exposing (WebData, RemoteData(..))
+import Material
 
 
 type Page
@@ -9,7 +10,11 @@ type Page
 
 
 type alias Model =
-    { response : WebData (List Order), currentPage : Page, selectedOrder : Order }
+    { response : WebData (List Order)
+    , currentPage : Page
+    , selectedOrder : Order
+    , mdl : Material.Model
+    }
 
 
 type alias Order =
