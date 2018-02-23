@@ -9,6 +9,7 @@ import Msg exposing (..)
 import ViewHelpers exposing (..)
 import RequestTrade exposing (requestTrade)
 import Material
+import WebSocket
 
 
 init : Location -> ( Model, Cmd Msg )
@@ -36,7 +37,7 @@ init location =
                 _ ->
                     "dealer1"
     in
-        ( Model NotAsked page (Order "" "") Material.model, getOrdersForDealer command )
+        ( Model NotAsked page (Order "" "") Material.model "", getOrdersForDealer command )
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -70,6 +71,12 @@ update msg model =
         Mdl msg_ ->
             Material.update Mdl msg_ model
 
+        Trade ->
+            ( model, WebSocket.send "ws://localhost:8080/trade" "Trade request" )
+
+        TradeWebSocketResponse messageBack ->
+            ( { model | webSocketResponse = messageBack }, Cmd.none )
+
 
 view : Model -> Html Msg
 view model =
@@ -86,8 +93,12 @@ main =
         { init = init
         , update = update
         , view = view
-        , subscriptions = always Sub.none
+        , subscriptions = subscriptions
         }
+
+
+subscriptions model =
+    WebSocket.listen "ws://localhost:8080/trade" Msg.TradeWebSocketResponse
 
 
 locFor : Location -> Msg

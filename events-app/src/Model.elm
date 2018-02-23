@@ -14,6 +14,7 @@ type alias Model =
     , currentPage : Page
     , selectedOrder : Order
     , mdl : Material.Model
+    , webSocketResponse : String
     }
 
 
