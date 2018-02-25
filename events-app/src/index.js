@@ -1,7 +1,9 @@
 import './main.css';
-import { Main } from './Main.elm';
+//import { Main } from './Main.elm';
 import registerServiceWorker from './registerServiceWorker';
 
-Main.embed(document.getElementById('root'));
+var app = require("./app.js");
+
+//Main.embed(document.getElementById('root'));
 
 registerServiceWorker();

@@ -40,8 +40,8 @@ render_order_table orderList model =
                             , Table.td [ Table.numeric ] [ Html.text order.dealer ]
                             , Table.td [ Table.numeric ]
                                 [ Html.button
-                                    -- [ Html.Events.onClick (RequestTrade order) ]
-                                    [ Html.Events.onClick (Trade) ]
+                                    [ Html.Events.onClick (RequestTrade order) ]
+                                    -- [ Html.Events.onClick (Trade) ]
                                     [ Html.text "Request Trade" ]
                                 ]
                             ]

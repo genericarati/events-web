@@ -72,7 +72,11 @@ update msg model =
             Material.update Mdl msg_ model
 
         Trade ->
-            ( model, WebSocket.send "ws://localhost:8080/trade" "Trade request" )
+            let
+                _ =
+                    Debug.log "I am in Trade message"
+            in
+                ( model, WebSocket.send "ws://localhost:8080/app/hello" "{name : \"Arati\"}" )
 
         TradeWebSocketResponse messageBack ->
             ( { model | webSocketResponse = messageBack }, Cmd.none )
@@ -93,12 +97,13 @@ main =
         { init = init
         , update = update
         , view = view
-        , subscriptions = subscriptions
+        , subscriptions = always Sub.none
         }
 
 
+subscriptions : Model -> Sub Msg
 subscriptions model =
-    WebSocket.listen "ws://localhost:8080/trade" Msg.TradeWebSocketResponse
+    WebSocket.listen "ws://localhost:8080/topic/greetings" Msg.TradeWebSocketResponse
 
 
 locFor : Location -> Msg
