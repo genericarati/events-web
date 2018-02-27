@@ -5,6 +5,7 @@ var SockJs = require('sockjs-client');
 var stomp = require('stompjs');
 
 var stompClient = null;
+ console.log("i am in app.js function");
 
 $(function () {
     $("form").on('submit', function (e) {
@@ -19,16 +20,19 @@ function sendName() {
     stompClient.send("/app/hello", {}, JSON.stringify({'name': $("#name").val()}));
 }
 
-function connect(){
-  var socket = new SockJs('http://localhost:8080/gs-guide-websocket');
-  stompClient = Stomp.over(socket);
-  stompClient.connect({},function(frame){
-      setConnected(true);
-      console.log('connected: ', frame);
-      stompClient.subscribe('/topic/greetings',function(greeting){
-          showGreeting(JSON.parse(greeting.body).content);
-      });
-  });
+module.exports = {
+        connect: function(){
+        console.log("in connect function")
+        var socket = new SockJs('http://localhost:8080/gs-guide-websocket');
+        stompClient = Stomp.over(socket);
+        stompClient.connect({},function(frame){
+            setConnected(true);
+            console.log('connected: ', frame);
+            stompClient.subscribe('/topic/greetings',function(greeting){
+                showGreeting(JSON.parse(greeting.body).content);
+            });
+        });
+      }
 }
 
 function disconnect() {

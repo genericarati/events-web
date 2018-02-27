@@ -1,9 +1,16 @@
 import './main.css';
-//import { Main } from './Main.elm';
+import { Main } from './Main.elm';
 import registerServiceWorker from './registerServiceWorker';
 
-var app = require("./app.js");
+var appFile = require("./app.js");
 
-//Main.embed(document.getElementById('root'));
+var app = Main.embed(document.getElementById('root'));
+
+app.ports.toJs.subscribe(function (str) {
+  console.log("got from Elm:", str);
+  appFile.connect();
+});
+
+app.ports.toElm.send("undefined is not a function");
 
 registerServiceWorker();

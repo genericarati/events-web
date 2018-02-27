@@ -1,4 +1,4 @@
-module Main exposing (..)
+port module Main exposing (..)
 
 import Html exposing (Html, text, div, h1, img, button, ul, li)
 import RemoteData exposing (WebData, RemoteData(..))
@@ -9,7 +9,6 @@ import Msg exposing (..)
 import ViewHelpers exposing (..)
 import RequestTrade exposing (requestTrade)
 import Material
-import WebSocket
 
 
 init : Location -> ( Model, Cmd Msg )
@@ -71,15 +70,15 @@ update msg model =
         Mdl msg_ ->
             Material.update Mdl msg_ model
 
-        Trade ->
+        Trade orderToTrade ->
+            ( model, toJs orderToTrade )
+
+        OrderTransferred messageBack ->
             let
                 _ =
-                    Debug.log "I am in Trade message"
+                    Debug.log messageBack
             in
-                ( model, WebSocket.send "ws://localhost:8080/app/hello" "{name : \"Arati\"}" )
-
-        TradeWebSocketResponse messageBack ->
-            ( { model | webSocketResponse = messageBack }, Cmd.none )
+                ( { model | webSocketResponse = messageBack }, Cmd.none )
 
 
 view : Model -> Html Msg
@@ -101,9 +100,15 @@ main =
         }
 
 
+port toJs : String -> Cmd msg
+
+
+port toElm : (String -> msg) -> Sub msg
+
+
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    WebSocket.listen "ws://localhost:8080/topic/greetings" Msg.TradeWebSocketResponse
+    toElm OrderTransferred
 
 
 locFor : Location -> Msg
