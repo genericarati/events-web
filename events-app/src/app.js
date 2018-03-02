@@ -11,7 +11,6 @@ module.exports = {
 
 
     connect: function(){
-            console.log("in connect function")
             var socket = new SockJs('http://localhost:8080/gs-guide-websocket');
             stompClient = Stomp.over(socket);
             stompClient.connect({},function(frame){
@@ -19,8 +18,8 @@ module.exports = {
             });
       },
 
-    subscribe: function(callback){
-              sendName();
+    subscribe: function(callback, order){
+              sendOrderToSpring(order);
                 if (stompClient !== null) {
                     stompClient.subscribe('/topic/greetings',function(greeting){
                     console.log("getting message back from team");
@@ -40,6 +39,6 @@ module.exports = {
 }
 
 
-function sendName() {
-  stompClient.send("/app/hello", {}, JSON.stringify({'name': "nameChanged"}));
+function sendOrderToSpring(order) {
+  stompClient.send("/app/hello", {}, JSON.stringify(order));
 }

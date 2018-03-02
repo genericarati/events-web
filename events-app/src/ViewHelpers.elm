@@ -41,7 +41,7 @@ render_order_table orderList model =
                             , Table.td [ Table.numeric ]
                                 [ Html.button
                                     -- [ Html.Events.onClick (RequestTrade order) ]
-                                    [ Html.Events.onClick (Trade order.ordernumber) ]
+                                    [ Html.Events.onClick (Trade order) ]
                                     [ Html.text "Request Trade" ]
                                 ]
                             ]

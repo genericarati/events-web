@@ -14,5 +14,5 @@ type Msg
     | LinkTo String
     | TradeResponse (WebData Int)
     | Mdl (Material.Msg Msg)
-    | Trade String
+    | Trade Model.Order
     | OrderTransferred String

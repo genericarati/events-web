@@ -6,18 +6,19 @@ var appFile = require("./app.js");
 
 var app = Main.embed(document.getElementById('root'));
 
-app.ports.requestTradePort.subscribe(function (str) {
-   console.log("From elm - Asking to get message from subscriptions");
+app.ports.requestTradePort.subscribe(function (order) {
    appFile.subscribe(function(err, result){
      console.log(err, result);
      app.ports.toElm.send(result);
-     appFile.disconnect();
-   });
+     // appFile.disconnect();
+   }, order);
 });
 
 app.ports.connectToStompPort.subscribe(function (connectMessage){
-  console.log("From elm - Asking to connect to stomp client");
   appFile.connect();
 });
 
+
 registerServiceWorker();
+//To do List
+//call disconnect function on browser close event or on transfer to other page

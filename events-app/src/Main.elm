@@ -95,7 +95,7 @@ main =
         }
 
 
-port requestTradePort : String -> Cmd msg
+port requestTradePort : Model.Order -> Cmd msg
 
 
 port connectToStompPort : String -> Cmd msg
