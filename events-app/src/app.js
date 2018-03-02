@@ -19,15 +19,16 @@ module.exports = {
             });
       },
 
-    subscribe: function(){
+    subscribe: function(callback){
               sendName();
-              if (stompClient !== null) {
-                  stompClient.subscribe('/topic/greetings',function(greeting){
-                  console.log("getting message back from team");
-                  console.log(greeting.content);
-                  // return "From Spring boot WebSocket hellow!!";
-              });
-            }
+                if (stompClient !== null) {
+                    stompClient.subscribe('/topic/greetings',function(greeting){
+                    console.log("getting message back from team");
+                    callback(null, "from spring boot websocket hello!!")
+                });
+              }else {
+                  callback("There was error.","");
+              }
     },
 
      disconnect: function() {

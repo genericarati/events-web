@@ -36,7 +36,7 @@ init location =
                 _ ->
                     "dealer1"
     in
-        ( Model NotAsked page (Order "" "") Material.model "", getOrdersForDealer command )
+        ( Model NotAsked page (Order "" "") Material.model "String", getOrdersForDealer command )
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -74,19 +74,14 @@ update msg model =
             ( model, requestTradePort orderToTrade )
 
         OrderTransferred messageBack ->
-            let
-                _ =
-                    Debug.log messageBack
-            in
-                ( { model | webSocketResponse = messageBack }, Cmd.none )
+            ( { model | webSocketResponse = messageBack }, Cmd.none )
 
 
 view : Model -> Html Msg
 view model =
     div []
-        [ div [ myStyle ]
-            [ render_page model
-            ]
+        [ div [ myStyle ] [ render_page model ]
+        , div [] [ text model.webSocketResponse ]
         ]
 
 
@@ -96,7 +91,7 @@ main =
         { init = init
         , update = update
         , view = view
-        , subscriptions = always Sub.none
+        , subscriptions = subscriptions
         }
 
 
