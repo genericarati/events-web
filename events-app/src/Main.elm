@@ -50,7 +50,7 @@ update msg model =
                 ( { model | selectedOrder = order }, requestTrade order )
 
         GetOrdersByDealerResponse response ->
-            ( { model | response = response }, Cmd.none )
+            ( { model | response = response }, connectToStompPort "connect" )
 
         Dealer1Page ->
             ( { model | currentPage = Dealer1 }, getOrdersForDealer "dealer1" )
@@ -71,7 +71,7 @@ update msg model =
             Material.update Mdl msg_ model
 
         Trade orderToTrade ->
-            ( model, toJs orderToTrade )
+            ( model, requestTradePort orderToTrade )
 
         OrderTransferred messageBack ->
             let
@@ -100,7 +100,10 @@ main =
         }
 
 
-port toJs : String -> Cmd msg
+port requestTradePort : String -> Cmd msg
+
+
+port connectToStompPort : String -> Cmd msg
 
 
 port toElm : (String -> msg) -> Sub msg

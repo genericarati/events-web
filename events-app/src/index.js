@@ -6,17 +6,21 @@ var appFile = require("./app.js");
 
 var app = Main.embed(document.getElementById('root'));
 
-app.ports.toJs.subscribe(function (str) {
-  console.log("got from Elm:", str);
-  var message = appFile.connect();
-  // var message = appFile.subscribe();
-  console.log(message);
+app.ports.requestTradePort.subscribe(function (str) {
+   console.log("From elm - Asking to get message from subscriptions");
+   appFile.subscribe();
+   // console.log(message);
+   // appFile.disconnect();
+});
 
+app.ports.connectToStompPort.subscribe(function (connectMessage){
+  console.log("From elm - Asking to connect to stomp client");
+  appFile.connect();
 });
 
 
-app.ports.toElm.send("");
+// app.ports.toElm.send("");
 
-appFile.disconnect();
+// appFile.disconnect();
 
 registerServiceWorker();
