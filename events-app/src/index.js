@@ -8,9 +8,15 @@ var app = Main.embed(document.getElementById('root'));
 
 app.ports.toJs.subscribe(function (str) {
   console.log("got from Elm:", str);
-  appFile.connect();
+  var message = appFile.connect();
+  // var message = appFile.subscribe();
+  console.log(message);
+
 });
 
-app.ports.toElm.send("undefined is not a function");
+
+app.ports.toElm.send("");
+
+appFile.disconnect();
 
 registerServiceWorker();
