@@ -21,9 +21,8 @@ module.exports = {
     subscribe: function(callback, order){
               sendOrderToSpring(order);
                 if (stompClient !== null) {
-                    stompClient.subscribe('/topic/greetings',function(greeting){
-                    console.log("getting message back from team");
-                    callback(null, "from spring boot websocket hello!!")
+                    stompClient.subscribe('/topic/tradeResponse',function(tradeResponse){
+                    callback(null, tradeResponse)
                 });
               }else {
                   callback("There was error.","");
@@ -40,5 +39,5 @@ module.exports = {
 
 
 function sendOrderToSpring(order) {
-  stompClient.send("/app/hello", {}, JSON.stringify(order));
+  stompClient.send("/app/trade", {}, JSON.stringify(order));
 }
