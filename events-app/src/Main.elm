@@ -9,6 +9,7 @@ import Msg exposing (..)
 import ViewHelpers exposing (..)
 import RequestTrade exposing (requestTrade)
 import Material
+import Json.Decode
 
 
 init : Location -> ( Model, Cmd Msg )
@@ -73,8 +74,17 @@ update msg model =
         Trade orderToTrade ->
             ( model, requestTradePort orderToTrade )
 
-        OrderTransferred messageBack ->
-            ( { model | webSocketResponse = messageBack }, Cmd.none )
+        OrderTransferred result ->
+            let
+                value =
+                    case result of
+                        Ok string ->
+                            string
+
+                        Err string ->
+                            string
+            in
+                ( { model | webSocketResponse = value }, Cmd.none )
 
 
 view : Model -> Html Msg
@@ -101,12 +111,17 @@ port requestTradePort : Model.Order -> Cmd msg
 port connectToStompPort : String -> Cmd msg
 
 
-port toElm : (String -> msg) -> Sub msg
+port toElm : (Json.Decode.Value -> msg) -> Sub msg
 
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    toElm OrderTransferred
+    toElm (decodeTradeResponse >> OrderTransferred)
+
+
+decodeTradeResponse : Json.Decode.Value -> Result String String
+decodeTradeResponse valueDecode =
+    Json.Decode.decodeValue (Json.Decode.field "content" Json.Decode.string) valueDecode
 
 
 locFor : Location -> Msg

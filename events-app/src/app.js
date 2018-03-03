@@ -22,7 +22,7 @@ module.exports = {
               sendOrderToSpring(order);
                 if (stompClient !== null) {
                     stompClient.subscribe('/topic/tradeResponse',function(tradeResponse){
-                    callback(null, tradeResponse)
+                    callback(null, JSON.parse(tradeResponse.body))
                 });
               }else {
                   callback("There was error.","");

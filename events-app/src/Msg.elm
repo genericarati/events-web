@@ -15,4 +15,4 @@ type Msg
     | TradeResponse (WebData Int)
     | Mdl (Material.Msg Msg)
     | Trade Model.Order
-    | OrderTransferred String
+    | OrderTransferred (Result String String)
