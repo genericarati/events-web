@@ -10,7 +10,7 @@ import Model exposing (..)
 requestTrade : Model.Order -> Cmd Msg
 requestTrade order =
     post "http://localhost:8080/requestTrade"
-        TradeResponse
+        Msg.TradeResponse
         tradeResponseDecoder
         (encodeOrder order)
 

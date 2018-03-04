@@ -8,7 +8,7 @@ import Material exposing (Msg)
 type Msg
     = NoOp
     | RequestTrade Model.Order
-    | GetOrdersByDealerResponse (WebData (List Model.Order))
+    | GetOrdersByDealerResponse (WebData (List Model.TradeResponse))
     | Dealer1Page
     | Dealer2Page
     | LinkTo String

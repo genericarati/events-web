@@ -10,12 +10,16 @@ type Page
 
 
 type alias Model =
-    { response : WebData (List Order)
+    { response : WebData (List TradeResponse)
     , currentPage : Page
     , selectedOrder : Order
     , mdl : Material.Model
     , webSocketResponse : String
     }
+
+
+type alias TradeResponse =
+    { order : Order, requestor : String }
 
 
 type alias Order =

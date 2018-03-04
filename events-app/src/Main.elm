@@ -117,10 +117,6 @@ type alias TradeRequest =
     { order : Model.Order, requestor : String }
 
 
-
--- port requestTradePort : Model.Order -> Cmd msg
-
-
 port requestTradePort : TradeRequest -> Cmd msg
 
 
