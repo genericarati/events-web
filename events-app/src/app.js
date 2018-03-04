@@ -18,8 +18,8 @@ module.exports = {
             });
       },
 
-    subscribe: function(callback, order){
-              sendOrderToSpring(order);
+    subscribe: function(callback, tradeRequest){
+              sendOrderToSpring(tradeRequest);
                 if (stompClient !== null) {
                     stompClient.subscribe('/topic/tradeResponse',function(tradeResponse){
                     callback(null, JSON.parse(tradeResponse.body))
@@ -38,6 +38,6 @@ module.exports = {
 }
 
 
-function sendOrderToSpring(order) {
-  stompClient.send("/app/trade", {}, JSON.stringify(order));
+function sendOrderToSpring(tradeRequest) {
+  stompClient.send("/app/trade", {}, JSON.stringify(tradeRequest));
 }

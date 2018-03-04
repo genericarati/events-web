@@ -6,12 +6,12 @@ var appFile = require("./app.js");
 
 var app = Main.embed(document.getElementById('root'));
 
-app.ports.requestTradePort.subscribe(function (order) {
+app.ports.requestTradePort.subscribe(function (tradeRequest) {
    appFile.subscribe(function(err, result){
      console.log(err, result);
-     app.ports.toElm.send(result);
+     app.ports.responseTradePort.send(result);
      // appFile.disconnect();
-   }, order);
+   }, tradeRequest);
 });
 
 app.ports.connectToStompPort.subscribe(function (connectMessage){

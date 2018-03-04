@@ -4,7 +4,7 @@ import Html exposing (Html, text, div, h1, img, button, ul, li)
 import RemoteData exposing (WebData, RemoteData(..))
 import Navigation exposing (Location)
 import GetOrders exposing (getListOfOrdersFromResponse, getOrdersForDealer)
-import Model exposing (Model, Order, Page(..))
+import Model as Model exposing (Model, Order, Page(..))
 import Msg exposing (..)
 import ViewHelpers exposing (..)
 import RequestTrade exposing (requestTrade)
@@ -44,11 +44,7 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         RequestTrade order ->
-            let
-                _ =
-                    Debug.log "test"
-            in
-                ( { model | selectedOrder = order }, requestTrade order )
+            ( { model | selectedOrder = order }, requestTrade order )
 
         GetOrdersByDealerResponse response ->
             ( { model | response = response }, connectToStompPort "connect" )
@@ -72,17 +68,29 @@ update msg model =
             Material.update Mdl msg_ model
 
         Trade orderToTrade ->
-            ( model, requestTradePort orderToTrade )
+            let
+                requestor =
+                    case model.currentPage of
+                        Dealer1 ->
+                            "dealer1"
+
+                        Dealer2 ->
+                            "dealer2"
+
+                value =
+                    TradeRequest orderToTrade requestor
+            in
+                ( model, requestTradePort value )
 
         OrderTransferred result ->
             let
                 value =
                     case result of
-                        Ok string ->
-                            string
+                        Ok value ->
+                            value
 
-                        Err string ->
-                            string
+                        Err error ->
+                            error
             in
                 ( { model | webSocketResponse = value }, Cmd.none )
 
@@ -105,18 +113,26 @@ main =
         }
 
 
-port requestTradePort : Model.Order -> Cmd msg
+type alias TradeRequest =
+    { order : Model.Order, requestor : String }
+
+
+
+-- port requestTradePort : Model.Order -> Cmd msg
+
+
+port requestTradePort : TradeRequest -> Cmd msg
 
 
 port connectToStompPort : String -> Cmd msg
 
 
-port toElm : (Json.Decode.Value -> msg) -> Sub msg
+port responseTradePort : (Json.Decode.Value -> msg) -> Sub msg
 
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    toElm (decodeTradeResponse >> OrderTransferred)
+    responseTradePort (decodeTradeResponse >> OrderTransferred)
 
 
 decodeTradeResponse : Json.Decode.Value -> Result String String
@@ -134,4 +150,4 @@ locFor location =
             Dealer2Page
 
         _ ->
-            NoOp
+            Dealer1Page
